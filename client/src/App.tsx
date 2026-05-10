@@ -19,6 +19,7 @@ import Packages from "./pages/Packages";
 import Loyalty from "./pages/Loyalty";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
+import Login from "./pages/Login";
 import ProductDetail from "./pages/ProductDetail";
 import WhatsAppButton from "./components/WhatsAppButton";
 import { useLocation } from "wouter";
@@ -52,7 +53,9 @@ function SiteSettingsProvider({ children }: { children: React.ReactNode }) {
 function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const isAdmin = location.startsWith("/admin");
+  const isLogin = location.startsWith("/login");
   return (
+   if (isLogin) return <>{children}</>;
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-1">
@@ -78,6 +81,7 @@ function Router() {
       <Route path="/loyalty" component={() => <Layout><Loyalty /></Layout>} />
       <Route path="/contact" component={() => <Layout><Contact /></Layout>} />
       <Route path="/admin" component={() => <Layout><Admin /></Layout>} />
+      <Route path="/login" component={() => <Layout><Login /></Layout>} />
       <Route path="/product/:id" component={() => <Layout><ProductDetail /></Layout>} />
       <Route path="/404" component={() => <Layout><NotFound /></Layout>} />
       <Route component={() => <Layout><NotFound /></Layout>} />
