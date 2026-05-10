@@ -46,7 +46,6 @@ export function registerOAuthRoutes(app: Express) {
         name: "Admin",
         email: adminEmail,
         loginMethod: "password",
-        role: "admin",
         lastSignedIn: new Date(),
       });
 
