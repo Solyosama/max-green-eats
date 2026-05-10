@@ -1,0 +1,1 @@
+ALTER TABLE `productExtras` ADD `calories` int;

@@ -1,0 +1,76 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1778067185549,
+      "tag": "0000_lumpy_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1778067359207,
+      "tag": "0001_charming_elektra",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1778069978985,
+      "tag": "0002_glamorous_centennial",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1778070526396,
+      "tag": "0003_slim_tempest",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1778073486150,
+      "tag": "0004_furry_galactus",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1778075294970,
+      "tag": "0005_redundant_morbius",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1778077451864,
+      "tag": "0006_slimy_terrax",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1778079564256,
+      "tag": "0007_ambiguous_black_bolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1778095075410,
+      "tag": "0008_icy_liz_osborn",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1778095181776,
+      "tag": "0009_powerful_kylun",
+      "breakpoints": true
+    }
+  ]
+}

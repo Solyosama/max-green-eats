@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `branches` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`nameAr` varchar(255) NOT NULL,\n\t`nameEn` varchar(255) NOT NULL,\n\t`addressAr` text,\n\t`addressEn` text,\n\t`phone` varchar(20),\n\t`latitude` decimal(10,8),\n\t`longitude` decimal(11,8),\n\t`openingHours` varchar(100),\n\t`isActive` boolean NOT NULL DEFAULT true,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `branches_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway06.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7S3Lh8utmczNhzv.root --database ZotQgS43irWW8esKNR5zBG --execute CREATE TABLE IF NOT EXISTS `branches` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`nameAr` varchar(255) NOT NULL,\n\t`nameEn` varchar(255) NOT NULL,\n\t`addressAr` text,\n\t`addressEn` text,\n\t`phone` varchar(20),\n\t`latitude` decimal(10,8),\n\t`longitude` decimal(11,8),\n\t`openingHours` varchar(100),\n\t`isActive` boolean NOT NULL DEFAULT true,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `branches_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 3230
+}

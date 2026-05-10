@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `products` ADD `branchId` int;\nALTER TABLE `products` ADD `hasExtras` boolean DEFAULT false NOT NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway06.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7S3Lh8utmczNhzv.root --database ZotQgS43irWW8esKNR5zBG --execute ALTER TABLE `products` ADD `branchId` int;\nALTER TABLE `products` ADD `hasExtras` boolean DEFAULT false NOT NULL;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2158
+}

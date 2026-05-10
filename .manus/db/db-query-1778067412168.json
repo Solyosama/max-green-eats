@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `products` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`nameAr` varchar(100) NOT NULL,\n\t`nameEn` varchar(100) NOT NULL,\n\t`descriptionAr` text,\n\t`descriptionEn` text,\n\t`category` varchar(50) NOT NULL,\n\t`price` decimal(10,2) NOT NULL,\n\t`imageUrl` text,\n\t`calories` int,\n\t`protein` decimal(6,1),\n\t`carbs` decimal(6,1),\n\t`fat` decimal(6,1),\n\t`isAvailable` boolean NOT NULL DEFAULT true,\n\t`isFeatured` boolean NOT NULL DEFAULT false,\n\t`rating` decimal(3,2) DEFAULT '0.00',\n\t`reviewCount` int NOT NULL DEFAULT 0,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `products_id` PRIMARY KEY(`id`)\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway06.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7S3Lh8utmczNhzv.root --database ZotQgS43irWW8esKNR5zBG --execute CREATE TABLE IF NOT EXISTS `products` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`nameAr` varchar(100) NOT NULL,\n\t`nameEn` varchar(100) NOT NULL,\n\t`descriptionAr` text,\n\t`descriptionEn` text,\n\t`category` varchar(50) NOT NULL,\n\t`price` decimal(10,2) NOT NULL,\n\t`imageUrl` text,\n\t`calories` int,\n\t`protein` decimal(6,1),\n\t`carbs` decimal(6,1),\n\t`fat` decimal(6,1),\n\t`isAvailable` boolean NOT NULL DEFAULT true,\n\t`isFeatured` boolean NOT NULL DEFAULT false,\n\t`rating` decimal(3,2) DEFAULT '0.00',\n\t`reviewCount` int NOT NULL DEFAULT 0,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `products_id` PRIMARY KEY(`id`)\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1679
+}

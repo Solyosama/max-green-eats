@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO `branches` (`nameAr`, `nameEn`, `addressAr`, `addressEn`, `phone`, `latitude`, `longitude`, `openingHours`, `isActive`) VALUES\n('فرع وسط البلد', 'Downtown Branch', 'شارع طلعت حرب، وسط البلد، القاهرة', '15 Talaat Harb St, Downtown, Cairo', '+20 2 2392 0000', 30.04442, 31.23571, '8:00 AM - 11:00 PM', true),\n('فرع المعادي', 'Maadi Branch', 'شارع 9، المعادي، القاهرة', '9th Street, Maadi, Cairo', '+20 2 2358 0000', 29.96006, 31.25744, '8:00 AM - 11:00 PM', true),\n('فرع الجيزة', 'Giza Branch', 'شارع الهرم، الجيزة', 'Haram St, Giza', '+20 2 3760 0000', 29.98714, 31.21264, '9:00 AM - 10:00 PM', true),\n('فرع مدينة نصر', 'Nasr City Branch', 'شارع عباس العقاد، مدينة نصر، القاهرة', 'Abbas El Akkad St, Nasr City, Cairo', '+20 2 2401 0000', 30.06263, 31.33568, '8:00 AM - 11:00 PM', true)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway06.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7S3Lh8utmczNhzv.root --database ZotQgS43irWW8esKNR5zBG --execute INSERT INTO `branches` (`nameAr`, `nameEn`, `addressAr`, `addressEn`, `phone`, `latitude`, `longitude`, `openingHours`, `isActive`) VALUES\n('فرع وسط البلد', 'Downtown Branch', 'شارع طلعت حرب، وسط البلد، القاهرة', '15 Talaat Harb St, Downtown, Cairo', '+20 2 2392 0000', 30.04442, 31.23571, '8:00 AM - 11:00 PM', true),\n('فرع المعادي', 'Maadi Branch', 'شارع 9، المعادي، القاهرة', '9th Street, Maadi, Cairo', '+20 2 2358 0000', 29.96006, 31.25744, '8:00 AM - 11:00 PM', true),\n('فرع الجيزة', 'Giza Branch', 'شارع الهرم، الجيزة', 'Haram St, Giza', '+20 2 3760 0000', 29.98714, 31.21264, '9:00 AM - 10:00 PM', true),\n('فرع مدينة نصر', 'Nasr City Branch', 'شارع عباس العقاد، مدينة نصر، القاهرة', 'Abbas El Akkad St, Nasr City, Cairo', '+20 2 2401 0000', 30.06263, 31.33568, '8:00 AM - 11:00 PM', true)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1661
+}

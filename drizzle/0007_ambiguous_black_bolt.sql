@@ -1,0 +1,1 @@
+ALTER TABLE `promoCodes` ADD `showOnHome` boolean DEFAULT true NOT NULL;

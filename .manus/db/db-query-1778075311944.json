@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `productExtras` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`productId` int NOT NULL,\n\t`type` enum('sauce','spice','bread') NOT NULL,\n\t`nameAr` varchar(100) NOT NULL,\n\t`nameEn` varchar(100) NOT NULL,\n\t`price` decimal(8,2) NOT NULL DEFAULT '0.00',\n\t`isDefault` boolean NOT NULL DEFAULT false,\n\t`sortOrder` int NOT NULL DEFAULT 0,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `productExtras_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway06.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 7S3Lh8utmczNhzv.root --database ZotQgS43irWW8esKNR5zBG --execute CREATE TABLE `productExtras` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`productId` int NOT NULL,\n\t`type` enum('sauce','spice','bread') NOT NULL,\n\t`nameAr` varchar(100) NOT NULL,\n\t`nameEn` varchar(100) NOT NULL,\n\t`price` decimal(8,2) NOT NULL DEFAULT '0.00',\n\t`isDefault` boolean NOT NULL DEFAULT false,\n\t`sortOrder` int NOT NULL DEFAULT 0,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\tCONSTRAINT `productExtras_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1622
+}
