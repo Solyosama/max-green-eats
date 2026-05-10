@@ -54,8 +54,8 @@ function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const isAdmin = location.startsWith("/admin");
   const isLogin = location.startsWith("/login");
+    if (isLogin) return <>{children}</>;
   return (
-   if (isLogin) return <>{children}</>;
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-1">
