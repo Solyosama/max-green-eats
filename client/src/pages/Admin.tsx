@@ -856,8 +856,7 @@ function SiteSettingsPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boolea
             <div><Label className="text-sm mb-1 block">{isRTL ? "اسم الموقع (عربي)" : "Site Name (Arabic)"}</Label><Input value={form.siteNameAr ?? ""} onChange={(e) => set("siteNameAr", e.target.value)} /></div>
             <div><Label className="text-sm mb-1 block">{isRTL ? "اسم الموقع (إنجليزي)" : "Site Name (English)"}</Label><Input value={form.siteNameEn ?? ""} onChange={(e) => set("siteNameEn", e.target.value)} /></div>
           </div>
-          <div><Label className="text-sm mb-1 block">{isRTL ? "رابط اللوجو" : "Logo URL"}</Label><Input dir="ltr" value={form.logoUrl ?? ""} onChange={(e) => set("logoUrl", e.target.value)} placeholder="https://..." /></div>
-          {form.logoUrl && <img src={form.logoUrl} alt="logo" className="h-12 object-contain rounded" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+          <div><Label className="text-sm mb-1 block">{isRTL ? "شعار الموقع" : "Site Logo"}</Label><ImageUploader value={form.logoUrl ?? ""} onChange={(url) => set("logoUrl", url)} isRTL={isRTL} folder="logo" /></div>
           <div><Label className="text-sm mb-1 block flex items-center gap-2"><Palette className="w-3.5 h-3.5" />{isRTL ? "اللون الرئيسي" : "Primary Color"}</Label>
             <div className="flex items-center gap-3">
               <input type="color" value={form.primaryColor ?? "#16a34a"} onChange={(e) => set("primaryColor", e.target.value)} className="w-12 h-10 rounded cursor-pointer border border-border" />
