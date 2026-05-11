@@ -59,8 +59,7 @@ export default function Navbar() {
       <div className="container">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-     <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shadow-md bg-primary">
+          <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center">
             {settings?.logoUrl ? (
               <img src={settings.logoUrl} alt="logo" className="w-full h-full object-cover" />
             ) : (
