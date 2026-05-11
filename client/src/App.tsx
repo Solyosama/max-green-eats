@@ -32,12 +32,13 @@ export const useSiteSettings = () => useContext(SiteSettingsContext);
 
 function SiteSettingsProvider({ children }: { children: React.ReactNode }) {
   const { data: settings } = trpc.settings.get.useQuery();
-  if (!settings?.primaryColor) return;
-    const hex = settings.primaryColor;
-    if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
-    document.documentElement.style.setProperty("--primary", hex);
-    document.documentElement.style.setProperty("--primary-foreground", "#ffffff");
-  }, [settings?.primaryColor]);
+  useEffect(() => {
+      if (!settings?.primaryColor) return;
+      const hex = settings.primaryColor;
+      if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
+      document.documentElement.style.setProperty("--primary", hex);
+      document.documentElement.style.setProperty("--primary-foreground", "#ffffff");
+    }, [settings?.primaryColor]);
   return (
     <SiteSettingsContext.Provider value={settings ?? {}}>
       {children}
