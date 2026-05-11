@@ -1,1 +1,1 @@
-ALTER TABLE `nutritionPlans` ADD COLUMN `features` text;
+ALTER TABLE `nutritionPlans` ADD COLUMN IF NOT EXISTS `features` text;
