@@ -492,8 +492,8 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
                 <Input type="number" value={form.price} onChange={(e) => setForm(f => ({ ...f, price: e.target.value }))} />
               </div>
               <div>
-                <Label className="text-sm mb-1 block">{isRTL ? "رابط الصورة" : "Image URL"}</Label>
-                <Input value={form.imageUrl} onChange={(e) => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                <Label className="text-sm mb-1 block">{isRTL ? "صورة الخطة" : "Plan Image"}</Label>
+                <ImageUploader value={form.imageUrl} onChange={(url) => setForm(f => ({ ...f, imageUrl: url }))} isRTL={isRTL} folder="nutrition" />
               </div>
             </div>
             <div className="flex items-center gap-2">
