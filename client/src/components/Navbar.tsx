@@ -59,13 +59,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shadow-md bg-primary">
-     {settings?.logoUrl ? (
-  <img src={settings.logoUrl} alt="logo" className="w-full h-full object-cover" />
-  ) : (
-    <Leaf className="w-5 h-5 text-white" />
-  )}
-</div>
+     <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shadow-md bg-primary">
+            {settings?.logoUrl ? (
+              <img src={settings.logoUrl} alt="logo" className="w-full h-full object-cover" />
+            ) : (
+              <Leaf className="w-5 h-5 text-white" />
+            )}
+          </div>
             </div>
             <div className="hidden sm:block">
               <div className="font-bold text-primary text-lg leading-tight" style={{ fontFamily: "'Cairo', sans-serif" }}>
