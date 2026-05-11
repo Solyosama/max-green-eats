@@ -407,24 +407,17 @@ function BranchesMgmtPanel({ isRTL }: { isRTL: boolean }) {
 // ─── Nutrition Management Panel ────────────────────────────────────────────────────
 function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boolean; isAuthenticated: boolean; userRole?: string }) {
   const utils = trpc.useUtils();
-  const { data: plans, isLoading } = trpc.nutrition.plans.useQuery();
-  const updatePlanMutation = trpc.admin.updateNutritionPlan.useMutation({
-    onSuccess: () => { toast.success(isRTL ? "تم تحديث الخطة" : "Plan updated"); utils.nutrition.plans.invalidate(); setEditingPlan(null); },
-    onError: (err) => toast.error(err.message),
-  });
-  const [editingPlan, setEditingPlan] = useState<any>(null);
-  const [planForm, setPlanForm] = useState({ nameAr: "", nameEn: "", descriptionAr: "", descriptionEn: "", price: "", imageUrl: "", isActive: true });
-
-  const openEdit = (plan: any) => {
-    setEditingPlan(plan);
-    setPlanForm({
-      nameAr: plan.nameAr, nameEn: plan.nameEn,
-      descriptionAr: plan.descriptionAr ?? "", descriptionEn: plan.descriptionEn ?? "",
-      price: String(plan.price), imageUrl: plan.imageUrl ?? "",
-      isActive: plan.isActive !== false,
-    });
-  };
-
+  const { data: plans, isLoading } = trpc.admin.allNutritionPlans.useQuery();
+  const createPlanMutation = trpc.admin.createNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم إضافة الخطة" : "Plan created"); utils.admin.allNutritionPlans.invalidate(); setShowForm(false); resetForm(); }, onError: (err) => toast.error(err.message) });
+  const updatePlanMutation = trpc.admin.updateNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم تحديث الخطة" : "Plan updated"); utils.admin.allNutritionPlans.invalidate(); setShowForm(false); setEditing(null); }, onError: (err) => toast.error(err.message) });
+  const deletePlanMutation = trpc.admin.deleteNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم حذف الخطة" : "Plan deleted"); utils.admin.allNutritionPlans.invalidate(); }, onError: (err) => toast.error(err.message) });
+  const emptyForm = { titleAr: "", titleEn: "", descriptionAr: "", descriptionEn: "", price: "", imageUrl: "", isActive: true };
+  const [form, setForm] = useState(emptyForm);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<any>(null);
+  const resetForm = () => setForm(emptyForm);
+  const openEdit = (plan: any) => { setEditing(plan); setForm({ titleAr: plan.titleAr, titleEn: plan.titleEn, descriptionAr: plan.descriptionAr ?? "", descriptionEn: plan.descriptionEn ?? "", price: String(plan.price), imageUrl: plan.imageUrl ?? "", isActive: plan.isActive !== false }); setShowForm(true); };
+  const handleSave = () => { if (!form.titleAr || !form.titleEn || !form.price) { toast.error(isRTL ? "يرجى ملء الحقول المطلوبة" : "Please fill required fields"); return; } const payload = { titleAr: form.titleAr, titleEn: form.titleEn, descriptionAr: form.descriptionAr || undefined, descriptionEn: form.descriptionEn || undefined, price: parseFloat(form.price), imageUrl: form.imageUrl || undefined, isActive: form.isActive }; if (editing) updatePlanMutation.mutate({ id: editing.id, ...payload }); else createPlanMutation.mutate(payload); };
   return (
     <div className="space-y-4">
       <Card>
@@ -466,54 +459,54 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
       </Card>
 
       {/* Edit Plan Dialog */}
-      <Dialog open={!!editingPlan} onOpenChange={(open) => { if (!open) setEditingPlan(null); }}>
+      <Dialog open={showForm} onOpenChange={(open) => { if (!open) { setEditing(null); resetForm(); } }}>
         <DialogContent className="max-w-lg" dir={isRTL ? "rtl" : "ltr"}>
           <DialogHeader>
-            <DialogTitle>{isRTL ? "تعديل خطة التغذية" : "Edit Nutrition Plan"}</DialogTitle>
+            <DialogTitle>{editing ? (isRTL ? "تعديل خطة التغذية" : "Edit Nutrition Plan") : (isRTL ? "إضافة خطة جديدة" : "Add New Plan")}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-sm mb-1 block">{isRTL ? "الاسم بالعربية" : "Name (Arabic)"}</Label>
-                <Input value={planForm.nameAr} onChange={(e) => setPlanForm(f => ({ ...f, nameAr: e.target.value }))} />
+                <Input value={form.titleAr} onChange={(e) => setForm(f => ({ ...f, titleAr: e.target.value }))} />
               </div>
               <div>
                 <Label className="text-sm mb-1 block">{isRTL ? "الاسم بالإنجليزية" : "Name (English)"}</Label>
-                <Input value={planForm.nameEn} onChange={(e) => setPlanForm(f => ({ ...f, nameEn: e.target.value }))} />
+                <Input value={form.titleEn} onChange={(e) => setForm(f => ({ ...f, titleEn: e.target.value }))} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-sm mb-1 block">{isRTL ? "الوصف بالعربية" : "Description (Arabic)"}</Label>
-                <textarea className="w-full border border-border rounded-lg p-2 text-sm bg-background resize-none" rows={2} value={planForm.descriptionAr} onChange={(e) => setPlanForm(f => ({ ...f, descriptionAr: e.target.value }))} />
+                <textarea className="w-full border border-border rounded-lg p-2 text-sm bg-background resize-none" rows={2} value={form.descriptionAr} onChange={(e) => setForm(f => ({ ...f, descriptionAr: e.target.value }))} />
               </div>
               <div>
                 <Label className="text-sm mb-1 block">{isRTL ? "الوصف بالإنجليزية" : "Description (English)"}</Label>
-                <textarea className="w-full border border-border rounded-lg p-2 text-sm bg-background resize-none" rows={2} value={planForm.descriptionEn} onChange={(e) => setPlanForm(f => ({ ...f, descriptionEn: e.target.value }))} />
+                <textarea className="w-full border border-border rounded-lg p-2 text-sm bg-background resize-none" rows={2} value={form.descriptionEn} onChange={(e) => setForm(f => ({ ...f, descriptionEn: e.target.value }))} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-sm mb-1 block">{isRTL ? "السعر (ج.م)" : "Price (EGP)"}</Label>
-                <Input type="number" value={planForm.price} onChange={(e) => setPlanForm(f => ({ ...f, price: e.target.value }))} />
+                <Input type="number" value={form.price} onChange={(e) => setForm(f => ({ ...f, price: e.target.value }))} />
               </div>
               <div>
                 <Label className="text-sm mb-1 block">{isRTL ? "رابط الصورة" : "Image URL"}</Label>
-                <Input value={planForm.imageUrl} onChange={(e) => setPlanForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                <Input value={form.imageUrl} onChange={(e) => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Switch checked={planForm.isActive} onCheckedChange={(v) => setPlanForm(f => ({ ...f, isActive: v }))} />
+              <Switch checked={form.isActive} onCheckedChange={(v) => setForm(f => ({ ...f, isActive: v }))} />
               <Label className="text-sm">{isRTL ? "الخطة نشطة" : "Plan Active"}</Label>
             </div>
             <div className="flex gap-3 pt-2">
               <Button className="flex-1 bg-primary hover:bg-primary/90 text-white gap-2"
-                onClick={() => updatePlanMutation.mutate({ id: editingPlan.id, nameAr: planForm.nameAr, nameEn: planForm.nameEn, descriptionAr: planForm.descriptionAr, descriptionEn: planForm.descriptionEn, price: parseFloat(planForm.price), imageUrl: planForm.imageUrl || undefined, isActive: planForm.isActive })}
-                disabled={updatePlanMutation.isPending}>
+                onClick={handleSave}
+                disabled={createPlanMutation.isPending || updatePlanMutation.isPending}>
                 <Save className="w-4 h-4" />
                 {isRTL ? "حفظ التغييرات" : "Save Changes"}
               </Button>
-              <Button variant="outline" className="flex-1" onClick={() => setEditingPlan(null)}>
+              <Button variant="outline" className="flex-1" onClick={() => { setShowForm(false); setEditing(null); resetForm(); }}>
                 {isRTL ? "إلغاء" : "Cancel"}
               </Button>
             </div>
