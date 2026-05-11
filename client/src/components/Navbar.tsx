@@ -66,7 +66,7 @@ export default function Navbar() {
               <Leaf className="w-5 h-5 text-white" />
             )}
           </div>
-            </div>
+      
             <div className="hidden sm:block">
               <div className="font-bold text-primary text-lg leading-tight" style={{ fontFamily: "'Cairo', sans-serif" }}>
                 ماكس جرين
