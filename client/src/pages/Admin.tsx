@@ -421,11 +421,12 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Leaf className="w-4 h-4 text-primary" />
             {isRTL ? "إدارة خطط التغذية" : "Manage Nutrition Plans"}
-          </CardTitle>
+        </CardTitle>
+          <Button size="sm" className="gap-1 bg-primary text-white" onClick={() => { resetForm(); setEditing(null); setShowForm(true); }}><Plus className="w-3.5 h-3.5" />{isRTL ? "إضافة خطة" : "Add Plan"}</Button>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -438,7 +439,7 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
                     <img src={plan.imageUrl} alt="" className="w-16 h-16 object-cover rounded-lg shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-sm">{isRTL ? plan.nameAr : plan.nameEn}</div>
+                    <div className="font-bold text-sm">{isRTL ? plan.titleAr : plan.titleEn}</div>
                     <div className="text-muted-foreground text-xs line-clamp-1">{isRTL ? plan.descriptionAr : plan.descriptionEn}</div>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-primary font-bold text-sm">{Number(plan.price).toFixed(0)} {isRTL ? "ج.م" : "EGP"}</span>
@@ -447,15 +448,15 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
                       </Badge>
                     </div>
                   </div>
-                  <Button size="sm" variant="outline" className="gap-1 shrink-0" onClick={() => openEdit(plan)}>
-                    <Edit className="w-3.5 h-3.5" />
-                    {isRTL ? "تعديل" : "Edit"}
-                  </Button>
+                 <div className="flex gap-1 shrink-0">
+                  <Button size="sm" variant="ghost" className="w-8 h-8 p-0 text-blue-600" onClick={() => openEdit(plan)}><Edit className="w-3.5 h-3.5" /></Button>
+                  <Button size="sm" variant="ghost" className="w-8 h-8 p-0 text-red-600" onClick={() => { if (confirm(isRTL ? "حذف هذه الخطة؟" : "Delete this plan?")) deletePlanMutation.mutate({ id: plan.id }); }}><Trash2 className="w-3.5 h-3.5" /></Button>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
       </Card>
 
       {/* Edit Plan Dialog */}
