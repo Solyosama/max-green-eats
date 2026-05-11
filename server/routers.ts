@@ -77,6 +77,10 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
+createNutritionPlan,
+  updateNutritionPlanById,
+  deleteNutritionPlan,
+  getAllNutritionPlans,
 } from "./db";
 
 export const appRouter = router({
@@ -682,12 +686,31 @@ export const appRouter = router({
         await updateInstapaySettings(input);
         return { success: true };
       }),
+   /** Admin: get all nutrition plans */
+    allNutritionPlans: adminProcedure.query(async () => getAllNutritionPlans()),
+
+    /** Admin: create nutrition plan */
+    createNutritionPlan: adminProcedure
+      .input(z.object({
+        titleAr: z.string(),
+        titleEn: z.string(),
+        descriptionAr: z.string().optional(),
+        descriptionEn: z.string().optional(),
+        price: z.number(),
+        imageUrl: z.string().optional(),
+        isActive: z.boolean().optional().default(true),
+      }))
+      .mutation(async ({ input }) => {
+        await createNutritionPlan(input);
+        return { success: true };
+      }),
+
     /** Admin: update nutrition plan */
     updateNutritionPlan: adminProcedure
       .input(z.object({
         id: z.number(),
-        nameAr: z.string().optional(),
-        nameEn: z.string().optional(),
+        titleAr: z.string().optional(),
+        titleEn: z.string().optional(),
         descriptionAr: z.string().optional(),
         descriptionEn: z.string().optional(),
         price: z.number().optional(),
@@ -695,25 +718,19 @@ export const appRouter = router({
         isActive: z.boolean().optional(),
       }))
       .mutation(async ({ input }) => {
-        const db = (await import("./db")).getDb;
-        const drizzleDb = await db();
-        if (!drizzleDb) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-        const { nutritionPlans } = await import("../drizzle/schema");
-        const { eq } = await import("drizzle-orm");
         const { id, ...rest } = input;
-        const updateData: Record<string, unknown> = {};
-        if (rest.nameAr !== undefined) updateData.nameAr = rest.nameAr;
-        if (rest.nameEn !== undefined) updateData.nameEn = rest.nameEn;
-        if (rest.descriptionAr !== undefined) updateData.descriptionAr = rest.descriptionAr;
-        if (rest.descriptionEn !== undefined) updateData.descriptionEn = rest.descriptionEn;
-        if (rest.price !== undefined) updateData.price = String(rest.price);
-        if (rest.imageUrl !== undefined) updateData.imageUrl = rest.imageUrl;
-        if (rest.isActive !== undefined) updateData.isActive = rest.isActive;
-        await drizzleDb.update(nutritionPlans).set(updateData).where(eq(nutritionPlans.id, id));
+        await updateNutritionPlanById(id, rest);
+        return { success: true };
+      }),
+
+    /** Admin: delete nutrition plan */
+    deleteNutritionPlan: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteNutritionPlan(input.id);
         return { success: true };
       }),
   }),
-
   // ─── Packages Admin ────────────────────────────────────────────────────────
   packagesAdmin: router({
     list: publicProcedure.query(() => getAllPackagesAdmin()),
