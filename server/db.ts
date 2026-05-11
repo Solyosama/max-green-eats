@@ -392,7 +392,37 @@ export async function getNutritionPlans() {
   if (!db) return [];
   return db.select().from(nutritionPlans).where(eq(nutritionPlans.isActive, true));
 }
+export async function getAllNutritionPlans() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(nutritionPlans).orderBy(nutritionPlans.createdAt);
+}
 
+export async function createNutritionPlan(data: { titleAr: string; titleEn: string; descriptionAr?: string; descriptionEn?: string; price: number; imageUrl?: string; isActive?: boolean; }) {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(nutritionPlans).values({ titleAr: data.titleAr, titleEn: data.titleEn, descriptionAr: data.descriptionAr ?? null, descriptionEn: data.descriptionEn ?? null, durationDays: 30, mealsPerDay: 3, price: String(data.price), imageUrl: data.imageUrl ?? null, isActive: data.isActive ?? true });
+}
+
+export async function updateNutritionPlanById(id: number, data: { titleAr?: string; titleEn?: string; descriptionAr?: string; descriptionEn?: string; price?: number; imageUrl?: string; isActive?: boolean; }) {
+  const db = await getDb();
+  if (!db) return;
+  const updateData: Record<string, unknown> = {};
+  if (data.titleAr !== undefined) updateData.titleAr = data.titleAr;
+  if (data.titleEn !== undefined) updateData.titleEn = data.titleEn;
+  if (data.descriptionAr !== undefined) updateData.descriptionAr = data.descriptionAr;
+  if (data.descriptionEn !== undefined) updateData.descriptionEn = data.descriptionEn;
+  if (data.price !== undefined) updateData.price = String(data.price);
+  if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+  if (data.isActive !== undefined) updateData.isActive = data.isActive;
+  await db.update(nutritionPlans).set(updateData).where(eq(nutritionPlans.id, id));
+}
+
+export async function deleteNutritionPlan(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(nutritionPlans).where(eq(nutritionPlans.id, id));
+}
 // ─── Packages ────────────────────────────────────────────────────────────────
 
 export async function getPackages() {
