@@ -398,10 +398,9 @@ export async function getAllNutritionPlans() {
   return db.select().from(nutritionPlans).orderBy(nutritionPlans.createdAt);
 }
 
-export async function createNutritionPlan(data: { titleAr: string; titleEn: string; descriptionAr?: string; descriptionEn?: string; price: number; imageUrl?: string; isActive?: boolean; }) {
-  const db = await getDb();
+export async function createNutritionPlan(data: { titleAr: string; titleEn: string; descriptionAr?: string; descriptionEn?: string; price: number; imageUrl?: string; isActive?: boolean; features?: string; }) {  const db = await getDb();
   if (!db) return;
-  await db.insert(nutritionPlans).values({ titleAr: data.titleAr, titleEn: data.titleEn, descriptionAr: data.descriptionAr ?? null, descriptionEn: data.descriptionEn ?? null, durationDays: 30, mealsPerDay: 3, price: String(data.price), imageUrl: data.imageUrl ?? null, isActive: data.isActive ?? true });
+  await db.insert(nutritionPlans).values({ titleAr: data.titleAr, titleEn: data.titleEn, descriptionAr: data.descriptionAr ?? null, descriptionEn: data.descriptionEn ?? null, durationDays: 30, mealsPerDay: 3, price: String(data.price), imageUrl: data.imageUrl ?? null, isActive: data.isActive ?? true, features: data.features ?? null });
 }
 
 export async function updateNutritionPlanById(id: number, data: { titleAr?: string; titleEn?: string; descriptionAr?: string; descriptionEn?: string; price?: number; imageUrl?: string; isActive?: boolean; }) {
@@ -415,6 +414,7 @@ export async function updateNutritionPlanById(id: number, data: { titleAr?: stri
   if (data.price !== undefined) updateData.price = String(data.price);
   if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
   if (data.isActive !== undefined) updateData.isActive = data.isActive;
+  if (data.features !== undefined) updateData.features = data.features;
   await db.update(nutritionPlans).set(updateData).where(eq(nutritionPlans.id, id));
 }
 
