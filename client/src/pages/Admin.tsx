@@ -411,16 +411,15 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
   const createPlanMutation = trpc.admin.createNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم إضافة الخطة" : "Plan created"); utils.admin.allNutritionPlans.invalidate(); setShowForm(false); resetForm(); }, onError: (err) => toast.error(err.message) });
   const updatePlanMutation = trpc.admin.updateNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم تحديث الخطة" : "Plan updated"); utils.admin.allNutritionPlans.invalidate(); setShowForm(false); setEditing(null); }, onError: (err) => toast.error(err.message) });
   const deletePlanMutation = trpc.admin.deleteNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم حذف الخطة" : "Plan deleted"); utils.admin.allNutritionPlans.invalidate(); }, onError: (err) => toast.error(err.message) });
-  const emptyForm = { titleAr: "", titleEn: "", descriptionAr: "", descriptionEn: "", price: "", imageUrl: "", isActive: true };
+  const emptyForm = { titleAr: "", titleEn: "", descriptionAr: "", descriptionEn: "", price: "", imageUrl: "", isActive: true, features: "" };
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const resetForm = () => setForm(emptyForm);
-  const openEdit = (plan: any) => { setEditing(plan); setForm({ titleAr: plan.titleAr, titleEn: plan.titleEn, descriptionAr: plan.descriptionAr ?? "", descriptionEn: plan.descriptionEn ?? "", price: String(plan.price), imageUrl: plan.imageUrl ?? "", isActive: plan.isActive !== false }); setShowForm(true); };
-  const handleSave = () => { if (!form.titleAr || !form.titleEn || !form.price) { toast.error(isRTL ? "يرجى ملء الحقول المطلوبة" : "Please fill required fields"); return; } const payload = { titleAr: form.titleAr, titleEn: form.titleEn, descriptionAr: form.descriptionAr || undefined, descriptionEn: form.descriptionEn || undefined, price: parseFloat(form.price), imageUrl: form.imageUrl || undefined, isActive: form.isActive }; if (editing) updatePlanMutation.mutate({ id: editing.id, ...payload }); else createPlanMutation.mutate(payload); };
+  const openEdit = (plan: any) => { setEditing(plan); setForm({ titleAr: plan.titleAr, titleEn: plan.titleEn, descriptionAr: plan.descriptionAr ?? "", descriptionEn: plan.descriptionEn ?? "", price: String(plan.price), imageUrl: plan.imageUrl ?? "", isActive: plan.isActive !== false, features: plan.features ?? "" }); setShowForm(true); };
+  const handleSave = () => { if (!form.titleAr || !form.titleEn || !form.price) { toast.error(isRTL ? "يرجى ملء الحقول المطلوبة" : "Please fill required fields"); return; } const payload = { titleAr: form.titleAr, titleEn: form.titleEn, descriptionAr: form.descriptionAr || undefined, descriptionEn: form.descriptionEn || undefined, price: parseFloat(form.price), imageUrl: form.imageUrl || undefined, isActive: form.isActive, features: form.features || undefined }; if (editing) updatePlanMutation.mutate({ id: editing.id, ...payload }); else createPlanMutation.mutate(payload); };
   return (
-    <div className="space-y-4">
-      <Card>
+    <div className="space-y-4">      <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Leaf className="w-4 h-4 text-primary" />
@@ -496,10 +495,14 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
                 <ImageUploader value={form.imageUrl} onChange={(url) => setForm(f => ({ ...f, imageUrl: url }))} isRTL={isRTL} folder="nutrition" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={form.isActive} onCheckedChange={(v) => setForm(f => ({ ...f, isActive: v }))} />
-              <Label className="text-sm">{isRTL ? "الخطة نشطة" : "Plan Active"}</Label>
-            </div>
+            <div>
+                <Label className="text-sm mb-1 block">{isRTL ? "المميزات (سطر لكل ميزة)" : "Features (one per line)"}</Label>
+                <textarea className="w-full border border-border rounded-lg p-2 text-sm bg-background resize-none" rows={4} value={form.features} onChange={(e) => setForm(f => ({ ...f, features: e.target.value }))} placeholder={isRTL ? "3 وجبات يومياً\nخطة غذائية مخصصة" : "3 meals daily\nCustom nutrition plan"} />
+              </div>
+              <div className="flex items-center gap-2">
+                <Switch checked={form.isActive} onCheckedChange={(v) => setForm(f => ({ ...f, isActive: v }))} />
+                <Label className="text-sm">{isRTL ? "الخطة نشطة" : "Plan Active"}</Label>
+              </div>
             <div className="flex gap-3 pt-2">
               <Button className="flex-1 bg-primary hover:bg-primary/90 text-white gap-2"
                 onClick={handleSave}
