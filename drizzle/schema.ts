@@ -197,6 +197,7 @@ export const nutritionPlans = mysqlTable("nutritionPlans", {
   caloriesTarget: int("caloriesTarget"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   imageUrl: text("imageUrl"),
+  features: text("features"),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
