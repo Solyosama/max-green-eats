@@ -698,8 +698,11 @@ export const appRouter = router({
         descriptionEn: z.string().optional(),
         price: z.number(),
         imageUrl: z.string().optional(),
-       isActive: z.boolean().optional().default(true),
+        isActive: z.boolean().optional().default(true),
         features: z.string().optional(),
+        durationDays: z.number().optional().default(30),
+        mealsPerDay: z.number().optional().default(3),
+        caloriesTarget: z.number().optional(),
       }))
       .mutation(async ({ input }) => {
         await createNutritionPlan(input);
@@ -715,13 +718,16 @@ export const appRouter = router({
         descriptionAr: z.string().optional(),
         descriptionEn: z.string().optional(),
         price: z.number().optional(),
-       imageUrl: z.string().optional(),
-          isActive: z.boolean().optional(),
-          features: z.string().optional(),
-        }))
-        .mutation(async ({ input }) => {
-          const { id, ...rest } = input;
-          await updateNutritionPlanById(id, rest);
+        imageUrl: z.string().optional(),
+        isActive: z.boolean().optional(),
+        features: z.string().optional(),
+        durationDays: z.number().optional(),
+        mealsPerDay: z.number().optional(),
+        caloriesTarget: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...rest } = input;
+        await updateNutritionPlanById(id, rest);
         return { success: true };
       }),
 
