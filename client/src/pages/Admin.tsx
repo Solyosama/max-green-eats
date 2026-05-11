@@ -415,7 +415,9 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<any>(null);
-  const resetForm = () => setForm(emptyForm);
+  const emptyFormData = { titleAr: "", titleEn: "", descriptionAr: "", descriptionEn: "", price: "", imageUrl: "", isActive: true, features: "" };
+  const resetForm = () => setForm({ ...emptyFormData });
+  const openAdd = () => { setEditing(null); setForm({ ...emptyFormData }); setShowForm(true); };
   const openEdit = (plan: any) => { setEditing(plan); setForm({ titleAr: plan.titleAr, titleEn: plan.titleEn, descriptionAr: plan.descriptionAr ?? "", descriptionEn: plan.descriptionEn ?? "", price: String(plan.price), imageUrl: plan.imageUrl ?? "", isActive: plan.isActive !== false, features: plan.features ?? "" }); setShowForm(true); };
   const handleSave = () => { if (!form.titleAr || !form.titleEn || !form.price) { toast.error(isRTL ? "يرجى ملء الحقول المطلوبة" : "Please fill required fields"); return; } const payload = { titleAr: form.titleAr, titleEn: form.titleEn, descriptionAr: form.descriptionAr || undefined, descriptionEn: form.descriptionEn || undefined, price: parseFloat(form.price), imageUrl: form.imageUrl || undefined, isActive: form.isActive, features: form.features || undefined }; if (editing) updatePlanMutation.mutate({ id: editing.id, ...payload }); else createPlanMutation.mutate(payload); };
   return (
@@ -425,7 +427,7 @@ function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boole
             <Leaf className="w-4 h-4 text-primary" />
             {isRTL ? "إدارة خطط التغذية" : "Manage Nutrition Plans"}
         </CardTitle>
-          <Button size="sm" className="gap-1 bg-primary text-white" onClick={() => { resetForm(); setEditing(null); setShowForm(true); }}><Plus className="w-3.5 h-3.5" />{isRTL ? "إضافة خطة" : "Add Plan"}</Button>
+          <Button size="sm" className="gap-1 bg-primary text-white" onClick={openAdd}><Plus className="w-3.5 h-3.5" />{isRTL ? "إضافة خطة" : "Add Plan"}</Button>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -911,6 +913,60 @@ function SiteSettingsPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boolea
           </div>
         </CardContent>
       </Card>
+
+      {/* Product Categories */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Tag className="w-4 h-4 text-primary" />{isRTL ? "فئات المنتجات" : "Product Categories"}</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-xs text-muted-foreground">{isRTL ? "أضف فئة في كل سطر بالصيغة: slug" : "Add one category per line as: slug"}</p>
+          {(() => {
+            const cats = form.productCategories
+              ? JSON.parse(form.productCategories)
+              : ["salads","grills","soups","sandwiches","juices","desserts","breakfast","main_course"];
+            return (
+              <textarea
+                className="w-full border border-border rounded-lg p-3 text-sm bg-background resize-none font-mono focus:outline-none focus:ring-2 focus:ring-primary/30"
+                rows={6}
+                dir="ltr"
+                value={cats.join("\n")}
+                onChange={(e) => set("productCategories", JSON.stringify(e.target.value.split("\n").map(s => s.trim()).filter(Boolean)))}
+              />
+            );
+          })()}
+          <p className="text-xs text-muted-foreground">{isRTL ? "مثال: salads / grills / soups" : "Example: salads / grills / soups"}</p>
+        </CardContent>
+      </Card>
+
+      {/* Extra Types */}
+      <Card>
+        <CardHeader><CardTitle className="text-base flex items-center gap-2"><Plus className="w-4 h-4 text-primary" />{isRTL ? "أنواع الإضافات" : "Extra Types"}</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-xs text-muted-foreground">{isRTL ? "كل سطر: value,اسم عربي,English name" : "Each line: value,Arabic name,English name"}</p>
+          {(() => {
+            const extraTypes = form.extraTypes
+              ? JSON.parse(form.extraTypes)
+              : [{ value: "sauce", labelAr: "صوص", labelEn: "Sauce" }, { value: "spice", labelAr: "حدة", labelEn: "Spice" }, { value: "bread", labelAr: "خبز", labelEn: "Bread" }];
+            const textVal = extraTypes.map((t: any) => `${t.value},${t.labelAr},${t.labelEn}`).join("\n");
+            return (
+              <textarea
+                className="w-full border border-border rounded-lg p-3 text-sm bg-background resize-none font-mono focus:outline-none focus:ring-2 focus:ring-primary/30"
+                rows={5}
+                dir="ltr"
+                value={textVal}
+                onChange={(e) => {
+                  const parsed = e.target.value.split("\n").map(line => {
+                    const [value, labelAr, labelEn] = line.split(",").map(s => s.trim());
+                    return value ? { value, labelAr: labelAr || value, labelEn: labelEn || value } : null;
+                  }).filter(Boolean);
+                  set("extraTypes", JSON.stringify(parsed));
+                }}
+              />
+            );
+          })()}
+          <p className="text-xs text-muted-foreground">{isRTL ? "مثال: sauce,صوص,Sauce" : "Example: sauce,صوص,Sauce"}</p>
+        </CardContent>
+      </Card>
+
       <div className="flex justify-end">
         <Button className="bg-primary hover:bg-primary/90 text-white gap-2 px-8" onClick={handleSave} disabled={updateMutation.isPending}>
           <Save className="w-4 h-4" />{isRTL ? "حفظ جميع الإعدادات" : "Save All Settings"}
@@ -1484,9 +1540,13 @@ export default function Admin() {
                 <Select value={productForm.category} onValueChange={(v) => setProductForm(f => ({ ...f, category: v }))}>
                   <SelectTrigger><SelectValue placeholder={isRTL ? "اختر الفئة" : "Select category"} /></SelectTrigger>
                   <SelectContent>
-                    {["salads","grills","soups","sandwiches","juices","desserts","breakfast","main_course"].map(c => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
+                    {(() => {
+                      const { data: siteSettings } = trpc.settings.get.useQuery();
+                      const cats = siteSettings?.productCategories
+                        ? JSON.parse(siteSettings.productCategories)
+                        : ["salads","grills","soups","sandwiches","juices","desserts","breakfast","main_course"];
+                      return cats.map((c: string) => <SelectItem key={c} value={c}>{c}</SelectItem>);
+                    })()}
                   </SelectContent>
                 </Select>
               </div>
@@ -1543,8 +1603,12 @@ export default function Admin() {
             {productForm.hasExtras && (
               <div className="border border-border rounded-lg p-3 space-y-3 bg-muted/30">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm font-semibold">{isRTL ? "الإضافات (صوص، حدة، خبز)" : "Extras (Sauces, Spice, Bread)"}</Label>
-                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setProductExtrasState(e => [...e, { type: "sauce", nameAr: "", nameEn: "", price: "0", isDefault: false }])}>
+                  <Label className="text-sm font-semibold">{isRTL ? "الإضافات" : "Extras"}</Label>
+                  <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => {
+                    const { data: siteSettings } = trpc.settings.get.useQuery();
+                    const extraTypes = siteSettings?.extraTypes ? JSON.parse(siteSettings.extraTypes) : [{ value: "sauce", labelAr: "صوص", labelEn: "Sauce" }];
+                    setProductExtrasState(e => [...e, { type: extraTypes[0]?.value || "sauce", nameAr: "", nameEn: "", price: "0", isDefault: false }]);
+                  }}>
                     <Plus className="w-3 h-3" />{isRTL ? "إضافة" : "Add"}
                   </Button>
                 </div>
@@ -1555,12 +1619,18 @@ export default function Admin() {
                   <div key={idx} className="grid grid-cols-12 gap-2 items-end border-b border-border/50 pb-2">
                     <div className="col-span-2">
                       <Label className="text-xs">{isRTL ? "النوع" : "Type"}</Label>
-                      <Select value={extra.type} onValueChange={(v) => setProductExtrasState(e => e.map((x, i) => i === idx ? { ...x, type: v as "sauce"|"spice"|"bread" } : x))}>
+                      <Select value={extra.type} onValueChange={(v) => setProductExtrasState(e => e.map((x, i) => i === idx ? { ...x, type: v } : x))}>
                         <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="sauce">{isRTL ? "صوص" : "Sauce"}</SelectItem>
-                          <SelectItem value="spice">{isRTL ? "حدة" : "Spice"}</SelectItem>
-                          <SelectItem value="bread">{isRTL ? "خبز" : "Bread"}</SelectItem>
+                          {(() => {
+                            const { data: siteSettings } = trpc.settings.get.useQuery();
+                            const extraTypes = siteSettings?.extraTypes
+                              ? JSON.parse(siteSettings.extraTypes)
+                              : [{ value: "sauce", labelAr: "صوص", labelEn: "Sauce" }, { value: "spice", labelAr: "حدة", labelEn: "Spice" }, { value: "bread", labelAr: "خبز", labelEn: "Bread" }];
+                            return extraTypes.map((t: any) => (
+                              <SelectItem key={t.value} value={t.value}>{isRTL ? t.labelAr : t.labelEn}</SelectItem>
+                            ));
+                          })()}
                         </SelectContent>
                       </Select>
                     </div>
