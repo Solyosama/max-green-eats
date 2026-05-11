@@ -32,16 +32,11 @@ export const useSiteSettings = () => useContext(SiteSettingsContext);
 
 function SiteSettingsProvider({ children }: { children: React.ReactNode }) {
   const { data: settings } = trpc.settings.get.useQuery();
-  useEffect(() => {
-    if (!settings?.primaryColor) return;
+  if (!settings?.primaryColor) return;
     const hex = settings.primaryColor;
     if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
-    const r = parseInt(hex.slice(1,3),16)/255, g = parseInt(hex.slice(3,5),16)/255, b = parseInt(hex.slice(5,7),16)/255;
-    const l = 0.2126*r + 0.7152*g + 0.0722*b;
-    const oklchL = (l * 0.7 + 0.3).toFixed(3);
-    const angle = (Math.atan2(b - g, r - b) * 180 / Math.PI + 150).toFixed(1);
-    document.documentElement.style.setProperty("--primary", `oklch(${oklchL} 0.18 ${angle})`);
-    document.documentElement.style.setProperty("--primary-foreground", parseFloat(oklchL) > 0.6 ? "oklch(0.15 0 0)" : "oklch(0.98 0 0)");
+    document.documentElement.style.setProperty("--primary", hex);
+    document.documentElement.style.setProperty("--primary-foreground", "#ffffff");
   }, [settings?.primaryColor]);
   return (
     <SiteSettingsContext.Provider value={settings ?? {}}>
