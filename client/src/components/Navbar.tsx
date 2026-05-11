@@ -1,4 +1,4 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useSiteSettings } from "@/App";
 import { useCart } from "@/contexts/CartContext";
 import { useLang } from "@/contexts/LanguageContext";
 import { getLoginUrl } from "@/const";
@@ -29,14 +29,14 @@ import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import NotificationBell from "@/components/NotificationBell";
-
+import { useSiteSettings } from "@/App";
 export default function Navbar() {
   const { lang, setLang, t, isRTL } = useLang();
   const { totalItems } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const settings = useSiteSettings();
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => { logout(); window.location.href = "/"; },
   });
@@ -59,8 +59,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-md">
-              <Leaf className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shadow-md bg-primary">
+  {settings?.siteLogo ? (
+    <img src={settings.siteLogo} alt="logo" className="w-full h-full object-cover" />
+  ) : (
+    <Leaf className="w-5 h-5 text-white" />
+  )}
+</div>
             </div>
             <div className="hidden sm:block">
               <div className="font-bold text-primary text-lg leading-tight" style={{ fontFamily: "'Cairo', sans-serif" }}>
