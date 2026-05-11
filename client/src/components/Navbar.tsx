@@ -60,8 +60,8 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shadow-md bg-primary">
-  {settings?.siteLogo ? (
-    <img src={settings.siteLogo} alt="logo" className="w-full h-full object-cover" />
+     {settings?.logoUrl ? (
+  <img src={settings.logoUrl} alt="logo" className="w-full h-full object-cover" />
   ) : (
     <Leaf className="w-5 h-5 text-white" />
   )}
