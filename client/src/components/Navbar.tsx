@@ -59,9 +59,9 @@ export default function Navbar() {
       <div className="container">
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo */}
-          <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center">
             {settings?.logoUrl ? (
-              <img src={settings.logoUrl} alt="logo" className="w-full h-full object-cover" />
+              <img src={settings.logoUrl} alt="logo" className="w-full h-full object-contain" />
             ) : (
               <Leaf className="w-5 h-5 text-white" />
             )}
