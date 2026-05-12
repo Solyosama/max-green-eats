@@ -44,6 +44,7 @@ import {
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _migrated = false;
 
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
@@ -53,6 +54,12 @@ export async function getDb() {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
     }
+  }
+  if (_db && !_migrated) {
+    _migrated = true;
+    try {
+      await _db.execute(sql`ALTER TABLE nutritionPlans ADD COLUMN IF NOT EXISTS features text`);
+    } catch {}
   }
   return _db;
 }
