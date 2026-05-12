@@ -407,10 +407,10 @@ function BranchesMgmtPanel({ isRTL }: { isRTL: boolean }) {
 // ─── Nutrition Management Panel ────────────────────────────────────────────────────
 function NutritionMgmtPanel({ isRTL, isAuthenticated, userRole }: { isRTL: boolean; isAuthenticated: boolean; userRole?: string }) {
   const utils = trpc.useUtils();
-  const { data: plans, isLoading } = trpc.admin.allNutritionPlans.useQuery();
-  const createPlanMutation = trpc.admin.createNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم إضافة الخطة" : "Plan created"); utils.admin.allNutritionPlans.invalidate(); setShowForm(false); resetForm(); }, onError: (err) => toast.error(err.message) });
-  const updatePlanMutation = trpc.admin.updateNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم تحديث الخطة" : "Plan updated"); utils.admin.allNutritionPlans.invalidate(); setShowForm(false); setEditing(null); }, onError: (err) => toast.error(err.message) });
-  const deletePlanMutation = trpc.admin.deleteNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم حذف الخطة" : "Plan deleted"); utils.admin.allNutritionPlans.invalidate(); }, onError: (err) => toast.error(err.message) });
+  const { data: plans, isLoading } = trpc.nutrition.plans.useQuery();
+  const createPlanMutation = trpc.admin.createNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم إضافة الخطة" : "Plan created"); utils.nutrition.plans.invalidate(); setShowForm(false); resetForm(); }, onError: (err) => toast.error(err.message) });
+  const updatePlanMutation = trpc.admin.updateNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم تحديث الخطة" : "Plan updated"); utils.nutrition.plans.invalidate(); setShowForm(false); setEditing(null); }, onError: (err) => toast.error(err.message) });
+  const deletePlanMutation = trpc.admin.deleteNutritionPlan.useMutation({ onSuccess: () => { toast.success(isRTL ? "تم حذف الخطة" : "Plan deleted"); utils.nutrition.plans.invalidate(); }, onError: (err) => toast.error(err.message) });
   const emptyForm = { titleAr: "", titleEn: "", descriptionAr: "", descriptionEn: "", price: "", imageUrl: "", isActive: true, features: "" };
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -998,7 +998,7 @@ export default function Admin() {
     imageUrl: "", isAvailable: true, isFeatured: false,
     branchId: "none", hasExtras: false,
   });
-   const [productExtrasState, setProductExtrasState] = useState<Array<{ type: "sauce"|"spice"|"bread"; nameAr: string; nameEn: string; price: string; isDefault: boolean }>>([]);
+   const [productExtrasState, setProductExtrasState] = useState<Array<{ type: string; nameAr: string; nameEn: string; price: string; isDefault: boolean }>>([]);
   const { data: editingProductExtras } = trpc.products.extras.useQuery(
     { productId: editingProduct?.id ?? 0 },
     { enabled: !!editingProduct?.id && showProductForm }
@@ -1031,6 +1031,13 @@ export default function Admin() {
   const { data: cateringRequests } = trpc.catering.allRequests.useQuery(undefined, { enabled: isAuthenticated && user?.role === "admin" });
   const { data: branchesData } = trpc.branches.list.useQuery(undefined, { enabled: isAuthenticated && user?.role === "admin" });
   const branchesList = branchesData ?? [];
+  const { data: siteSettingsData } = trpc.settings.get.useQuery(undefined, { enabled: isAuthenticated && user?.role === "admin" });
+  const productCategories = siteSettingsData?.productCategories
+    ? JSON.parse(siteSettingsData.productCategories)
+    : ["salads","grills","soups","sandwiches","juices","desserts","breakfast","main_course"];
+  const extraTypes = siteSettingsData?.extraTypes
+    ? JSON.parse(siteSettingsData.extraTypes)
+    : [{ value: "sauce", labelAr: "صوص", labelEn: "Sauce" }, { value: "spice", labelAr: "حدة", labelEn: "Spice" }, { value: "bread", labelAr: "خبز", labelEn: "Bread" }];
 
   const createProductMutation = trpc.products.create.useMutation({
     onSuccess: () => {
@@ -1540,13 +1547,9 @@ export default function Admin() {
                 <Select value={productForm.category} onValueChange={(v) => setProductForm(f => ({ ...f, category: v }))}>
                   <SelectTrigger><SelectValue placeholder={isRTL ? "اختر الفئة" : "Select category"} /></SelectTrigger>
                   <SelectContent>
-                    {(() => {
-                      const { data: siteSettings } = trpc.settings.get.useQuery();
-                      const cats = siteSettings?.productCategories
-                        ? JSON.parse(siteSettings.productCategories)
-                        : ["salads","grills","soups","sandwiches","juices","desserts","breakfast","main_course"];
-                      return cats.map((c: string) => <SelectItem key={c} value={c}>{c}</SelectItem>);
-                    })()}
+                    {productCategories.map((c: string) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -1605,8 +1608,6 @@ export default function Admin() {
                 <div className="flex items-center justify-between">
                   <Label className="text-sm font-semibold">{isRTL ? "الإضافات" : "Extras"}</Label>
                   <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => {
-                    const { data: siteSettings } = trpc.settings.get.useQuery();
-                    const extraTypes = siteSettings?.extraTypes ? JSON.parse(siteSettings.extraTypes) : [{ value: "sauce", labelAr: "صوص", labelEn: "Sauce" }];
                     setProductExtrasState(e => [...e, { type: extraTypes[0]?.value || "sauce", nameAr: "", nameEn: "", price: "0", isDefault: false }]);
                   }}>
                     <Plus className="w-3 h-3" />{isRTL ? "إضافة" : "Add"}
@@ -1622,15 +1623,9 @@ export default function Admin() {
                       <Select value={extra.type} onValueChange={(v) => setProductExtrasState(e => e.map((x, i) => i === idx ? { ...x, type: v } : x))}>
                         <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {(() => {
-                            const { data: siteSettings } = trpc.settings.get.useQuery();
-                            const extraTypes = siteSettings?.extraTypes
-                              ? JSON.parse(siteSettings.extraTypes)
-                              : [{ value: "sauce", labelAr: "صوص", labelEn: "Sauce" }, { value: "spice", labelAr: "حدة", labelEn: "Spice" }, { value: "bread", labelAr: "خبز", labelEn: "Bread" }];
-                            return extraTypes.map((t: any) => (
-                              <SelectItem key={t.value} value={t.value}>{isRTL ? t.labelAr : t.labelEn}</SelectItem>
-                            ));
-                          })()}
+                          {extraTypes.map((t: any) => (
+                            <SelectItem key={t.value} value={t.value}>{isRTL ? t.labelAr : t.labelEn}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
