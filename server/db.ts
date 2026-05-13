@@ -59,6 +59,7 @@ export async function getDb() {
     _migrated = true;
     try {
       await _db.execute(sql`ALTER TABLE nutritionPlans ADD COLUMN IF NOT EXISTS features text`);
+      await _db.execute(sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS address text`);
     } catch {}
   }
   return _db;
@@ -97,6 +98,18 @@ export async function getUserByOpenId(openId: string) {
   if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateUserProfile(id: number, data: { name?: string; phone?: string; address?: string }) {
+  const db = await getDb();
+  if (!db) return;
+  const updateData: Record<string, unknown> = {};
+  if (data.name !== undefined) updateData.name = data.name;
+  if (data.phone !== undefined) updateData.phone = data.phone;
+  if (data.address !== undefined) updateData.address = data.address;
+  if (Object.keys(updateData).length > 0) {
+    await db.update(users).set(updateData).where(eq(users.id, id));
+  }
 }
 
 export async function getAllUsers(limit = 50, offset = 0) {
@@ -434,6 +447,18 @@ export async function deleteNutritionPlan(id: number) {
   if (!db) return;
   await db.delete(nutritionPlans).where(eq(nutritionPlans.id, id));
 }
+export async function getUserOrders(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(orders).where(eq(orders.userId, userId)).orderBy(desc(orders.createdAt)).limit(50);
+}
+
+export async function getUserSubscriptions(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(nutritionSubscriptions).where(eq(nutritionSubscriptions.userId, userId)).orderBy(desc(nutritionSubscriptions.createdAt));
+}
+
 // ─── Packages ────────────────────────────────────────────────────────────────
 
 export async function getPackages() {

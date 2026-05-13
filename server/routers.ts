@@ -77,7 +77,10 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
-createNutritionPlan,
+upsertUser,
+  getUserByOpenId,
+  updateUserProfile,
+  createNutritionPlan,
   updateNutritionPlanById,
   deleteNutritionPlan,
   getAllNutritionPlans,
@@ -93,6 +96,36 @@ export const appRouter = router({
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
     }),
+    phoneLogin: publicProcedure
+      .input(z.object({ phone: z.string().min(8), name: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        const openId = `phone_${input.phone.replace(/\D/g, "")}`;
+        await upsertUser({ openId, phone: input.phone, name: input.name ?? null, loginMethod: "phone" });
+        const user = await getUserByOpenId(openId);
+        if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, openId, cookieOptions);
+        return { success: true, user };
+      }),
+  }),
+
+  // ─── User Profile ──────────────────────────────────────────────────────────
+  profile: router({
+    get: protectedProcedure.query(async ({ ctx }) => getUserByOpenId(ctx.user.openId)),
+    update: protectedProcedure
+      .input(z.object({
+        name: z.string().optional(),
+        phone: z.string().optional(),
+        address: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await updateUserProfile(ctx.user.id, input);
+        return { success: true };
+      }),
+    loyaltyPoints: protectedProcedure.query(async ({ ctx }) => getLoyaltyPoints(ctx.user.id)),
+    loyaltyHistory: protectedProcedure.query(async ({ ctx }) => getLoyaltyHistory(ctx.user.id)),
+    myOrders: protectedProcedure.query(async ({ ctx }) => getUserOrders(ctx.user.id)),
+    mySubscriptions: protectedProcedure.query(async ({ ctx }) => getUserSubscriptions(ctx.user.id)),
   }),
 
   // ─── Products ──────────────────────────────────────────────────────────────
