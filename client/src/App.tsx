@@ -20,6 +20,8 @@ import Loyalty from "./pages/Loyalty";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
+import PhoneLogin from "./pages/PhoneLogin";
+import Profile from "./pages/Profile";
 import ProductDetail from "./pages/ProductDetail";
 import WhatsAppButton from "./components/WhatsAppButton";
 import { useLocation } from "wouter";
@@ -49,7 +51,7 @@ function SiteSettingsProvider({ children }: { children: React.ReactNode }) {
 function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const isAdmin = location.startsWith("/admin");
-  const isLogin = location.startsWith("/login");
+  const isLogin = location.startsWith("/login") || location.startsWith("/phone-login");
     if (isLogin) return <>{children}</>;
   return (
     <div className="flex flex-col min-h-screen">
@@ -78,6 +80,8 @@ function Router() {
       <Route path="/contact" component={() => <Layout><Contact /></Layout>} />
       <Route path="/admin" component={() => <Layout><Admin /></Layout>} />
       <Route path="/login" component={() => <Layout><Login /></Layout>} />
+      <Route path="/phone-login" component={() => <Layout><PhoneLogin /></Layout>} />
+      <Route path="/profile" component={() => <Layout><Profile /></Layout>} />
       <Route path="/product/:id" component={() => <Layout><ProductDetail /></Layout>} />
       <Route path="/404" component={() => <Layout><NotFound /></Layout>} />
       <Route component={() => <Layout><NotFound /></Layout>} />
