@@ -447,18 +447,6 @@ export async function deleteNutritionPlan(id: number) {
   if (!db) return;
   await db.delete(nutritionPlans).where(eq(nutritionPlans.id, id));
 }
-export async function getUserOrders(userId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(orders).where(eq(orders.userId, userId)).orderBy(desc(orders.createdAt)).limit(50);
-}
-
-export async function getUserSubscriptions(userId: number) {
-  const db = await getDb();
-  if (!db) return [];
-  return db.select().from(nutritionSubscriptions).where(eq(nutritionSubscriptions.userId, userId)).orderBy(desc(nutritionSubscriptions.createdAt));
-}
-
 // ─── Packages ────────────────────────────────────────────────────────────────
 
 export async function getPackages() {
